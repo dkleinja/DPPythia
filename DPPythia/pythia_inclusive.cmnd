@@ -1,0 +1,46 @@
+! main03.cmnd.
+! This file contains commands to be read in for a Pythia8 run.
+! Lines not beginning with a letter or digit are comments.
+! Names are case-insensitive  -  but spellings-sensitive!
+! The settings here are illustrative, not always physics-motivated.
+
+! 1) Settings used in the main program.
+Main:numberOfEvents = 100000        ! number of events to generate
+Main:timesAllowErrors = 3          ! how many aborts before run stops
+
+! 2) Settings related to output in init(), next() and stat().
+Init:showChangedSettings = on      ! list changed settings
+Init:showChangedParticleData = off ! list changed particle data
+Next:numberCount = 1000            ! print message every n events
+Next:numberShowInfo = 1            ! print event information n times
+Next:numberShowProcess = 1         ! print process record n times
+Next:numberShowEvent = 0           ! print event record n times
+
+! 3) Beam parameter settings. Values below agree with default ones.
+Beams:frameType = 2
+Beams:idA = 2212                   ! first beam, p = 2212, pbar = -2212
+Beams:idB = 2212                   ! second beam, p = 2212, pbar = -2212
+Beams:eA = 120.
+Beams:eB = 0.			   ! 4) Settings for the hard-process generation.
+
+! Example 1: QCD + prompt photon production; must set pTmin.
+#HardQCD:all = on                   ! switch on all QCD jet + jet processes
+#SoftQCD:all = on                 ! All soft QCD processes
+SoftQCD:nonDiffractive = on      ! No diffractive soft QCD processes
+#PromptPhoton:all = on              ! swich on gamma + jet and gamma + gamma
+#PhaseSpace:pTHatMin = 50.          ! minimal pT scale in process
+#PhaseSpace:mHatMin = 0.         ! minimal pT scale in process
+
+! 6) Other settings. Can be expanded as desired.
+#Tune:preferLHAPDF = off            	! use internal PDFs when LHAPDF not linked
+PDF:pSet = 7                        	! CTEQ6L
+211:mayDecay = true			! Pion decay
+#321:mayDecay = true			! Kaon decay
+#310:mayDecay = true			! K_short decay
+#130:mayDecay = true			! K_long decay
+#Tune:pp = 6                        	! use Tune 4Cx
+#ParticleDecays:limitTau0 = on     	! set long-lived particle stable ...
+#ParticleDecays:tau0Max = 8000        	! ... if c*tau0 > 10 mm
+ParticleDecays:limitCylinder = on	! set cylinder in front of kmag
+ParticleDecays:xyMax = 1030		!Face of fMag 
+ParticleDecays:zMax =  1350		!distance of fMag 
