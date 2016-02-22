@@ -45,6 +45,7 @@ int main() {
 
   int nParticles;
   int particleID[10000];
+  int parentID[10000];
   TClonesArray *fMomentum = new TClonesArray("TVector3");
   fMomentum -> BypassStreamer();
   TClonesArray& Momentum = *fMomentum;
@@ -53,9 +54,10 @@ int main() {
   TClonesArray& Position = *fPosition;
 
   //Make TTree
-  TTree *pythiatree = new TTree("pythiatree", "pythiatree");
+  TTree *pythiatree = new TTree("save", "save");
   pythiatree -> Branch("n", &nParticles, "n/I");
   pythiatree -> Branch("pdg", particleID, "pdg[n]/I"); 
+  pythiatree -> Branch("parent", parentID, "parent[n]/I"); 
   pythiatree -> Branch("pos", &fPosition, 256000, 99);
   pythiatree -> Branch("mom", &fMomentum, 256000, 99);
 
@@ -81,7 +83,7 @@ int main() {
 	  nMuons++;
 	  //cout << iEvent << " We got a muon!  Energy:  " << event[i].e() << "  zProd:  " << event[i].zProd()/1000 << "  Mother1:  " << event[event[i].mother1()].id() << endl;
 	  if(event[i].zProd()/1000 < minZvtxDecay){
-	    cout << iEvent << " We got a muon!  Energy:  " << event[i].e() << "  zProd:  " << event[i].zProd()/1000 << "  Mother1:  " << event[event[i].mother1()].id() << endl;
+	    //cout << iEvent << " We got a muon!  Energy:  " << event[i].e() << "  zProd:  " << event[i].zProd()/1000 << "  Mother1:  " << event[event[i].mother1()].id() << endl;
 	    nPions++;
 	    //HdndpTdeta_pos -> Fill(event[i].pz(), event[i].eta());
 	    
@@ -92,6 +94,7 @@ int main() {
 	    
 	    nParticles++;
 	    particleID[nParticles-1] = event[i].id();
+	    parentID[nParticles-1] = event[event[i].mother1()].id();
 	    new(Momentum[nParticles-1]) TVector3(*getMomentum);
 	    new(Position[nParticles-1]) TVector3(*getPosition);
 
@@ -113,7 +116,7 @@ int main() {
   pythia.stat();
 
   // Create file on which histogram(s) can be saved.
-  TFile* outFile = new TFile("hist.root", "RECREATE");
+  TFile* outFile = new TFile("pythiatree.root", "RECREATE");
   
   // Save histogram on file and close file.
   //HdndpTdeta_pos -> Write();
