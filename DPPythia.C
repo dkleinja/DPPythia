@@ -37,8 +37,6 @@ int main() {
 
   // Book histograms.
   TH1F *Hdummy = new TH1F("dummy histo", "dummy histo",10, 0, 1); 
-  //TH2D *HdndpTdeta_pos =  new TH2D("HdndpTdeta_pos", "dpTdeta positive pions", 50, 0., 50., 140, -7, 7);
-  //TH2F HdndpTdeta_neg("dpTdeta pegative pions", 50, 0, 50, 50, -5, 5);
   
   TVector3 *getMomentum = new TVector3();
   TVector3 *getPosition = new TVector3();
@@ -64,8 +62,9 @@ int main() {
 
   // Begin event loop.
   int iAbort = 0;
-  int nPions = 0;
   int nMuons = 0;
+  int nPions = 0;
+  int nKaons = 0;
   for (int iEvent = 0; iEvent < nEvent; ++iEvent) {
 
     // Generate events. Quit if many failures.
@@ -77,41 +76,74 @@ int main() {
 
     // Loop over final particles in the event.
     for (int i = 0; i < event.size(); ++i){
-      
-      if (abs(event[i].id()) == 13) {
-	if(event[i].e() > minEnergy){
-	  nMuons++;
-	  //cout << iEvent << " We got a muon!  Energy:  " << event[i].e() << "  zProd:  " << event[i].zProd()/1000 << "  Mother1:  " << event[event[i].mother1()].id() << endl;
+      //if (event[i].id() == 2212) {
+	//cout << iEvent << " We got a proton!  Energy:  " << event[i].e() << "  zProd:  " << event[i].zDec()/1000 << "  Mother1:  " << event[event[i].mother1()].id() << endl;
+      //}
+      if(event[i].e() > minEnergy){
+	if (abs(event[i].id()) == 13) {
 	  if(event[i].zProd()/1000 < minZvtxDecay){
+	    nMuons++;
 	    //cout << iEvent << " We got a muon!  Energy:  " << event[i].e() << "  zProd:  " << event[i].zProd()/1000 << "  Mother1:  " << event[event[i].mother1()].id() << endl;
-	    nPions++;
-	    //HdndpTdeta_pos -> Fill(event[i].pz(), event[i].eta());
 	    
-	    //getPosition -> SetXYZ(event[i].xProd(), event[i].yProd(), event[i].zProd());
 	    getMomentum -> SetXYZ(event[i].px(), event[i].py(), event[i].pz());
-	    getPosition -> SetXYZ(event[i].xProd(), event[i].yProd(), event[i].zProd());
-
-	    
+	    getPosition -> SetXYZ(event[i].xProd(), event[i].yProd(), event[i].zProd());	    
 	    nParticles++;
 	    particleID[nParticles-1] = event[i].id();
 	    parentID[nParticles-1] = event[event[i].mother1()].id();
 	    new(Momentum[nParticles-1]) TVector3(*getMomentum);
 	    new(Position[nParticles-1]) TVector3(*getPosition);
-
-	    pythiatree -> Fill();
+	    //pythiatree -> Fill();
 	  }
 	}
+	/*
+	if (abs(event[i].id()) == 211){
+	  if(event[i].zProd()/1000 < minZvtxDecay && event[i].zDec()/1000 > minZvtxDecay){
+	    //if(event[i].zDec()/1000 > minZvtxDecay){
+	    nPions++;
+	    //cout << iEvent << " We got a pion!  Energy:  " << event[i].e() << " zDec:  " << event[i].zDec()/1000 << " zDec:  " << event[i].zDec()/1000 << "  Mother1:  " << event[event[i].mother1()].id() << endl;
+	    
+	    getMomentum -> SetXYZ(event[i].px(), event[i].py(), event[i].pz());
+	    getPosition -> SetXYZ(event[i].xProd(), event[i].yProd(), event[i].zProd());	    
+	    nParticles++;
+	    particleID[nParticles-1] = event[i].id();
+	    parentID[nParticles-1] = event[event[i].mother1()].id();
+	    new(Momentum[nParticles-1]) TVector3(*getMomentum);
+	    new(Position[nParticles-1]) TVector3(*getPosition);
+	    //pythiatree -> Fill();
+	  }   
+	}
+	if (abs(event[i].id()) == 321){
+	  if(event[i].zProd()/1000 < minZvtxDecay && event[i].zDec()/1000 > minZvtxDecay){
+	    //if(event[i].zDec()/1000 > minZvtxDecay){
+	    nKaons++;
+	    //cout << iEvent << " We got a kaon!  Energy:  " << event[i].e() << "  zDec:  " << event[i].zDec()/1000 << "  Mother1:  " << event[event[i].mother1()].id() << endl;
+	    
+	    getMomentum -> SetXYZ(event[i].px(), event[i].py(), event[i].pz());
+	    getPosition -> SetXYZ(event[i].xProd(), event[i].yProd(), event[i].zProd());	    
+	    nParticles++;
+	    particleID[nParticles-1] = event[i].id();
+	    parentID[nParticles-1] = event[event[i].mother1()].id();
+	    new(Momentum[nParticles-1]) TVector3(*getMomentum);
+	    new(Position[nParticles-1]) TVector3(*getPosition);
+	    //pythiatree -> Fill();
+	  }   
+	}
+	*/
       }
-      // End of particle loop. Fill global properties.
+      
+      // End of particle loop. Fill global properties. 
     }
-    //reset counters
+    //fill tree, reset counters
+    if(nParticles>0)pythiatree -> Fill();
     nParticles = 0.;
     fMomentum->Clear();
     fPosition->Clear();
 
     // End of event loop.
   }
-  cout << "The total number of muons before dump is " << nPions << "  The total number of muons is " << nMuons << endl;
+  cout << "The total number of muons before dump is " << nMuons << endl;
+  cout << "The total number of pions is " << nPions << endl;
+  cout << "The total number of kaons is " << nKaons << endl;
   // Final statistics. Normalize and output histograms.
   pythia.stat();
 
@@ -119,12 +151,10 @@ int main() {
   TFile* outFile = new TFile("pythiatree.root", "RECREATE");
   
   // Save histogram on file and close file.
-  //HdndpTdeta_pos -> Write();
   pythiatree -> Write();
 
   outFile -> Close();
   delete outFile;
-  //delete HdndpTdeta_pos;
   delete pythiatree;
 
   // Done.
