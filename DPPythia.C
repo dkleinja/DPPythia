@@ -1,6 +1,5 @@
 //Goal is to generate pythia events for Seaquest spectrometer
 
-
 #include "Pythia8/Pythia.h"
 
 #include "TH1.h"
@@ -17,7 +16,27 @@ float minEta = 2.0;
 float maxEta = 5.0;
 float minZvtxDecay = 1.35;
 
-int main() {
+
+
+int main(int argc, char **argv) {
+
+  //initial arguments
+  int seed = -1;
+  char seedString[32];
+  char inputFile[1000];
+  char outputFile[1000];
+
+  sprintf(inputFile, "pythia_inclusive.cmnd");
+  sprintf(outputFile, "pythiatree.root");
+
+  for (int i = 1; i < argc; i=i+2){
+    if(!strcmp(argv[i], "-f"))
+      strcpy(inputFile, argv[i + 1]);
+    if(!strcmp(argv[i], "-s"))
+      seed = atoi(argv[i+1]);
+    if(!strcmp(argv[i], "-o"))
+      strcpy(outputFile, argv[i + 1]);
+  }
 
   // Generator.
   Pythia pythia;
@@ -26,7 +45,11 @@ int main() {
   Event& event = pythia.event;
 
   // Read in commands from external file.
-  pythia.readFile("pythia_inclusive.cmnd");
+  pythia.readString("Random:setSeed = on");
+  sprintf(seedString, "Random:seed = %d", seed);
+  pythia.readString(seedString);
+  pythia.readFile(inputFile);
+	
 
   // Extract settings to be used in the main program.
   int nEvent = pythia.mode("Main:numberOfEvents");
@@ -130,8 +153,6 @@ int main() {
 	}
 	*/
       }
-      
-      // End of particle loop. Fill global properties. 
     }
     //fill tree, reset counters
     if(nParticles>0)pythiatree -> Fill();
@@ -148,7 +169,7 @@ int main() {
   pythia.stat();
 
   // Create file on which histogram(s) can be saved.
-  TFile* outFile = new TFile("pythiatree.root", "RECREATE");
+  TFile* outFile = new TFile(outputFile, "RECREATE");
   
   // Save histogram on file and close file.
   pythiatree -> Write();
