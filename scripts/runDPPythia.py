@@ -5,6 +5,7 @@ import sys
 from datetime import datetime
 from optparse import OptionParser
 
+#run_enable = False
 run_enable = True
 
 ## simple function to run a command
@@ -65,7 +66,7 @@ wrappers = [os.path.join(wrapperdir, '%s.sh' % (options.output % str(i))) for i 
 ## if in local mode, make everything locally in the background
 if options.local:
     for i in range(len(logs)):
-        cmd = '%s -t %s -o %s -s %d > %s &' % (DPPythia, tempdir, outputs[i], options.seed+i, logs[i])
+        cmd = '%s -t %s -w %s -s %d > %s &' % (DPPythia, tempdir, outputs[i], options.seed+i, logs[i])
         runCmd(cmd)
 
 ## if in grid mode, assume running on gpvm machines
@@ -89,11 +90,13 @@ if options.grid:
         fout.write('echo --------------------------------------------------------------------\n')
         fout.write('echo\n')
 
-        fout.write('source ' + os.path.join(os.getenv('DPSIM_ROOT'), 'exenv.sh') + '\n')
+        #need to fix line below to be more versatile
+        fout.write('source ' + os.path.join(os.getenv('SEAQUEST_DISTRIBUTION_ROOT'), 'setup/setup.sh') + '\n')
+        fout.write('source ' + os.path.join(os.getenv('DPPYTHIA_ROOT'), 'setup.sh') + '\n')
         fout.write('cd $_CONDOR_SCRATCH_DIR\n')
         fout.write('start_sec=$(date +%s)\n')
         fout.write('start_time=$(date +%F_%T)\n')
-        fout.write('%s -t %s -o %s -s %d > %s &' % (DPPythia, tempdir, outputs[i], options.seed+i, logs[i]))
+        fout.write('%s -t %s -w %s -s %d > %s &' % (DPPythia, tempdir, outputs[i], options.seed+i, logs[i]))
         fout.write('status=$?\n')
         fout.write('stop_time=$(date +%F_%T)\n')
         fout.write('stop_sec=$(date +%s)\n')
@@ -103,6 +106,13 @@ if options.grid:
         fout.write('exit $retcode\n')
 
         fout.close()
+
+
+    # make wrapper file executable
+    for i in range(len(logs)):
+        cmd = '%s -t %s -w %s -s %d > %s &' % (DPPythia, tempdir, outputs[i], options.seed+i, logs[i])
+        cmd = 'chmod u+x %s' % (wrappers[i])
+        runCmd(cmd)
 
     # make jobsub commands and submit
     for i in range(len(logs)):

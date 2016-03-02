@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
       strcpy(inputFile, argv[i + 1]);
     if(!strcmp(argv[i], "-s"))
       seed = atoi(argv[i+1]);
-    if(!strcmp(argv[i], "-o"))
+    if(!strcmp(argv[i], "-w"))
       strcpy(outputFile, argv[i + 1]);
   }
 
