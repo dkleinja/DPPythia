@@ -30,7 +30,7 @@ int main(int argc, char **argv) {
   sprintf(outputFile, "pythiatree.root");
 
   for (int i = 1; i < argc; i=i+2){
-    if(!strcmp(argv[i], "-f"))
+    if(!strcmp(argv[i], "-t"))
       strcpy(inputFile, argv[i + 1]);
     if(!strcmp(argv[i], "-s"))
       seed = atoi(argv[i+1]);
