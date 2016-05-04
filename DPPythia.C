@@ -14,7 +14,7 @@ using namespace Pythia8;
 float minEnergy = 5;
 float minEta = 2.0;
 float maxEta = 5.0;
-float minZvtxDecay = 1.35;
+float minZvtxDecay = 0.;
 
 
 
@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
       strcpy(inputFile, argv[i + 1]);
     if(!strcmp(argv[i], "-s"))
       seed = atoi(argv[i+1]);
-    if(!strcmp(argv[i], "-w"))
+    if(!strcmp(argv[i], "-o"))
       strcpy(outputFile, argv[i + 1]);
   }
 
@@ -109,7 +109,7 @@ int main(int argc, char **argv) {
 	    //cout << iEvent << " We got a muon!  Energy:  " << event[i].e() << "  zProd:  " << event[i].zProd()/1000 << "  Mother1:  " << event[event[i].mother1()].id() << endl;
 	    
 	    getMomentum -> SetXYZ(event[i].px(), event[i].py(), event[i].pz());
-	    getPosition -> SetXYZ(event[i].xProd(), event[i].yProd(), event[i].zProd());	    
+	    getPosition -> SetXYZ(event[i].xProd()*cm, event[i].yProd()*cm, event[i].zProd()*cm);	    
 	    nParticles++;
 	    particleID[nParticles-1] = event[i].id();
 	    parentID[nParticles-1] = event[event[i].mother1()].id();
@@ -126,7 +126,7 @@ int main(int argc, char **argv) {
 	    //cout << iEvent << " We got a pion!  Energy:  " << event[i].e() << " zDec:  " << event[i].zDec()/1000 << " zDec:  " << event[i].zDec()/1000 << "  Mother1:  " << event[event[i].mother1()].id() << endl;
 	    
 	    getMomentum -> SetXYZ(event[i].px(), event[i].py(), event[i].pz());
-	    getPosition -> SetXYZ(event[i].xProd(), event[i].yProd(), event[i].zProd());	    
+	    getPosition -> SetXYZ(event[i].xProd()*cm, event[i].yProd()*cm, event[i].zProd()*cm);	    
 	    nParticles++;
 	    particleID[nParticles-1] = event[i].id();
 	    parentID[nParticles-1] = event[event[i].mother1()].id();
@@ -142,7 +142,7 @@ int main(int argc, char **argv) {
 	    //cout << iEvent << " We got a kaon!  Energy:  " << event[i].e() << "  zDec:  " << event[i].zDec()/1000 << "  Mother1:  " << event[event[i].mother1()].id() << endl;
 	    
 	    getMomentum -> SetXYZ(event[i].px(), event[i].py(), event[i].pz());
-	    getPosition -> SetXYZ(event[i].xProd(), event[i].yProd(), event[i].zProd());	    
+	    getPosition -> SetXYZ(event[i].xProd()*cm, event[i].yProd()*cm, event[i].zProd()*cm);	    
 	    nParticles++;
 	    particleID[nParticles-1] = event[i].id();
 	    parentID[nParticles-1] = event[event[i].mother1()].id();
