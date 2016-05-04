@@ -11,11 +11,12 @@
 
 using namespace Pythia8;
 
+//cut variables, conversions
 float minEnergy = 5;
 float minEta = 2.0;
 float maxEta = 5.0;
 float minZvtxDecay = 0.;
-
+float cm = 0.1;
 
 
 int main(int argc, char **argv) {
@@ -64,6 +65,7 @@ int main(int argc, char **argv) {
   TVector3 *getMomentum = new TVector3();
   TVector3 *getPosition = new TVector3();
 
+  int eventID = 0;
   int nParticles;
   int particleID[10000];
   int parentID[10000];
@@ -76,6 +78,7 @@ int main(int argc, char **argv) {
 
   //Make TTree
   TTree *pythiatree = new TTree("save", "save");
+  pythiatree -> Branch("eventID", &eventID, "eventID/I");
   pythiatree -> Branch("n", &nParticles, "n/I");
   pythiatree -> Branch("pdg", particleID, "pdg[n]/I"); 
   pythiatree -> Branch("parent", parentID, "parent[n]/I"); 
@@ -156,10 +159,10 @@ int main(int argc, char **argv) {
     }
     //fill tree, reset counters
     if(nParticles>0)pythiatree -> Fill();
+    eventID++;
     nParticles = 0.;
     fMomentum->Clear();
     fPosition->Clear();
-
     // End of event loop.
   }
   cout << "The total number of muons before dump is " << nMuons << endl;
